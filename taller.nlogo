@@ -1,91 +1,84 @@
-turtles-own[resistencia ]
+breed [Greenpeaces greenpeace]
 
-to inicio
+turtles-own[
+  resistencia
+  edad
+]
 
+to Inicio
   clear-all
-  reset-ticks
 
-  create-turtles tortugasf[
-  setxy random-xcor random-ycor
-    set resistencia 10
+  create-turtles 40[
+    setxy random-xcor random-ycor
+
+    set color [55 55 55]
   ]
-  ask patches [set pcolor green]
 
+  create-Greenpeaces 2 [
+    setxy random-xcor random-ycor
+    set shape "bug"
+    set color [10 95 44]
+  ]
 
+  ask patches [
+    set pcolor [25 193 103]
+  ]
 end
 
-to runn
-  forward 1
-  let contador 1
-  set heading 160
-END
+to Ejecutar
+  mover_Sheeps
+  mover_Greenpeaces
+end
 
-to movertortugas
+to mover_Sheeps
   ask turtles [
-  forward 1
-  set resistencia resistencia - 1
-  set heading random 360
+    forward 1
+    set resistencia resistencia - 1
+    set edad edad + 1
+    set heading random 360
 
-  if (pcolor = green) [
-    set pcolor blue
-    set resistencia resistencia + 1
-  ]
-    if (resistencia = 0) [
-    die
+    if any? other turtles-here [
+      show "Murieron por choque"
+      ;show count Sheeps-here
+      ;show count other Sheeps-here
+      ask turtles-here [ die ]
+    ]
+
+    if (pcolor = [25 193 103])[
+      set pcolor [64 164 223]
+      set resistencia resistencia + 3
+    ]
+    if (resistencia < 1)[
+      show "Murio por falta de energia"
+      die
+    ]
+    if (edad = 43)[
+      show "Murio por edad"
+      die
     ]
   ]
 end
 
-to comer-parcelas
-  ask turtles [
-    if pcolor = green [
-      set pcolor black
-           ;; the value of energy-from-grass slider is added to energy
-      set resistencia (resistencia + tortugasf)
-    ]
-  ifelse show-energy?
-    [ set label resistencia ] ;; the label is set to be the value of the energy
-    [ set label "" ]     ;; the label is set to an empty text value
-  ]
-end
+to mover_Greenpeaces
+  ask Greenpeaces [
+    forward 1
+    set heading random 360
 
-to reproduce
-  ask turtles [
-    if resistencia > birth-energy [
-    set resistencia resistencia - birth-energy  ;; take away birth-energy to give birth
-    hatch 1 [ set resistencia birth-energy ] ;; give this birth-energy to the offspring
+    if (pcolor = [64 164 223])[
+      set pcolor [25 193 103]
+      show "Regenero terreno"
     ]
   ]
-end
-
-to verificar-muertes
-  ask turtles [
-    if resistencia <= 43 [ die ] ;; removes the turtle if it has no energy left
-  ]
-end
-
-to regrow-grass
-  ask patches [ ;; 3 out of 100 times, the patch color is set to green
-    if random 100 < 3 [ set pcolor green ]
-  ]
-end
-
-to do-plots
-  set-current-plot "Totals" ;; which plot we want to use next
-  set-current-plot-pen "turtles" ;; which pen we want to use next
-  plot count turtles ;; what will be plotted by the current pen
-  set-current-plot-pen "grass" ;; which pen we want to use next
-  plot count patches with [pcolor = green] ;; what will be plotted by the current pen
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-209
+544
 10
-646
-448
+1138
+605
 -1
 -1
-13.0
+17.76
 1
 10
 1
@@ -106,46 +99,12 @@ ticks
 30.0
 
 BUTTON
+65
 31
-28
-94
-61
-NIL
-inicio
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-31
-81
-94
-114
-NIL
-runn
-NIL
-1
-T
-TURTLE
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-30
-139
-143
-172
-NIL
-movertortugas
+190
+64
+Iniciar
+Inicio
 NIL
 1
 T
@@ -157,70 +116,27 @@ NIL
 1
 
 SLIDER
-667
-33
-839
-66
-tortugasf
-tortugasf
+60
+177
+284
+210
+num_tortugas
+num_tortugas
 40
 60
 40.0
-40
-1
-NIL
-HORIZONTAL
-
-BUTTON
-32
-198
-148
-231
-NIL
-comer-parcelas
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-SWITCH
-672
-100
-806
-133
-show-energy?
-show-energy?
-1
-1
--1000
-
-SLIDER
-672
-161
-844
-194
-birth-energy
-birth-energy
-0
-100
-19.0
 1
 1
 NIL
 HORIZONTAL
 
 BUTTON
-30
-262
-156
-295
-NIL
-verificar-muertes
+65
+96
+150
+129
+Correr
+Ejecutar
 NIL
 1
 T
@@ -573,7 +489,7 @@ false
 Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 @#$#@#$#@
-NetLogo 6.0.2
+NetLogo 6.0.1
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
